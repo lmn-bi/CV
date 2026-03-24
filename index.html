@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Martín Nieto | Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            100: '#e2e8f0',
+                            200: '#cbd5e1',
+                            300: '#94a3b8',
+                            400: '#64748b',
+                            500: '#475569',
+                            600: '#334155',
+                            700: '#1e293b',
+                            800: '#0f172a',
+                            900: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            /* Slate 900 base */
+            color: #e2e8f0;
+            /* Slate 100 text */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Metallic Gradients & Borders */
+        .text-gradient-metallic {
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bg-gradient-metallic {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .border-metallic {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: border-color 0.3s ease;
+        }
+
+        .border-metallic:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Glow effects */
+        .glow-hover:hover {
+            box-shadow: 0 0 30px rgba(148, 163, 184, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body class="selection:bg-slate-700 selection:text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Custom SVG Icons (since Lucide CDN is tricky without bundler, inline SVGs ensure 100% reliability)
+        const Icons = {
+            Mail: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>,
+            Phone: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>,
+            MapPin: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 15 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg>,
+            Linkedin: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" /></svg>,
+            Globe: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>,
+            ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+        };
+
+        const content = {
+            en: {
+                nav: { contact: "Contact Me" },
+                hero: {
+                    title: "Martín Nieto",
+                    subtitle: "AI | Data & BI | PMO",
+                    summary: `Data & Business Intelligence professional with 5+ years of experience driving data-driven decision making, digital transformation and process optimization across international environments.\n\nProven track record translating complex data and technical workflows into business insights, KPI frameworks and scalable reporting solutions.\n\nExperienced in stakeholder coordination, training support, and adoption of digital tools, with growing expertise in AI, automation and analytics enablement.\n\nStrong communicator with the ability to bridge the gap between technical teams and business users, enabling adoption of new tools, workflows and data-driven practices.`,
+                    cta: "Work with Me",
+                    location: "Spain (Remote)"
+                },
+                skills: {
+                    title: "Core Expertise",
+                    categories: [
+                        { name: "AI & Digital Enablement", items: ["AI Tools & LLMs", "AI Workflow Automation - n8n", "Digital Adoption"] },
+                        { name: "Data & Analytics", items: ["Power BI & DOMO", "Advanced EXCEL & SQL", "Data Storytelling", "KPI Design & OLAP"] },
+                        { name: "Project Management", items: ["Agile Methodologies", "PMO Governance", "Stakeholder Mgmt", "Jira"] }
+                    ]
+                },
+                experience: {
+                    title: "Selected Experience",
+                    roles: [
+                        {
+                            title: "Business Intelligence Analyst",
+                            company: "American Express GBT",
+                            location: "Remote (Spain)",
+                            date: "Present",
+                            description: "Developed and maintained strategic dashboards to support business decision-making. Defined and monitored KPIs aligned with business objectives. Created ETLs and logics according to the requirements of the business. Collaborated with technical teams and business units to translate requirements into data solutions and support BI tool adoption."
+                        },
+                        {
+                            title: "Data & Business Intelligence Analyst",
+                            company: "Freelance",
+                            location: "Spain",
+                            date: "Previous",
+                            description: "Designed multidimensional data models and OLAP cubes for advanced analytics. Worked directly with clients to translate business needs into data solutions. Improved reporting efficiency, reducing manual analysis through data structuring and automation."
+                        },
+                        {
+                            title: "Building Contractor / Project Manager",
+                            company: "Independent",
+                            location: "Argentina",
+                            date: "Jan 2019 – Jan 2020",
+                            description: "Managed end-to-end project planning, resource allocation and execution. Coordinated teams ensuring delivery within timeline and budget constraints. Developed strong capabilities in stakeholder communication and operational execution."
+                        },
+                        {
+                            title: "Data Analyst – Digitalization Project",
+                            company: "IT Sector",
+                            location: "Argentina",
+                            date: "Aug 2016 – Dec 2018",
+                            description: "Transformed structured data for the software development of land registry systems. Enabled searchability and accessibility of large datasets, improving operational efficiency. Acted as a technical bridge."
+                        },
+                        {
+                            title: "Assistant Project Manager",
+                            company: "NA-SA S.A. - Nuclear Power Plant Life Extension",
+                            location: "Argentina",
+                            date: "Oct 2015 – Aug 2018",
+                            description: "Coordinated local and international stakeholders supporting a large-scale infrastructure project. Managed budgets, planning and tracking with Primavera P6. Conducted impact analysis and progress monitoring."
+                        }
+                    ]
+                },
+                education: {
+                    title: "Education",
+                    items: [
+                        { degree: "Master Artificial Intelligence", school: "BIG school, Spain", year: "2025/2026" },
+                        { degree: "Digital Project Management", school: "Barcelona, Spain", year: "2020" },
+                        { degree: "Industrial Engineer", school: "Universidad Tecnológica Nacional, ARG", year: "2012" }
+                    ]
+                },
+                footer: { text: "© 2024 Martín Nieto. All rights reserved." }
+            },
+            es: {
+                nav: { contact: "Contacto" },
+                hero: {
+                    title: "Martín Nieto",
+                    subtitle: "IA | Datos y BI | PMO",
+                    summary: `Profesional en Data & Business Intelligence con más de 5 años de experiencia impulsando la toma de decisiones basada en datos, la transformación digital y la optimización de procesos en entornos dinamicos.\n\nCuento con una trayectoria sólida traduciendo flujos de trabajo técnicos y datos complejos en ‘insights’ de negocio, KPIs y soluciones de reporting.\n\nExperto en la coordinación de stakeholders, soporte en formación y adopción de herramientas digitales, con una especialización creciente en IA, automatización y habilitación analítica.\n\nPoseo fuertes habilidades comunicativas para cerrar la brecha entre los equipos técnicos y las áreas de negocio, facilitando la adopción de nuevos flujos de trabajo y prácticas orientadas a la mejora continua.`,
+                    cta: "Trabaja Conmigo",
+                    location: "España (Remoto)"
+                },
+                skills: {
+                    title: "Áreas de Especialización",
+                    categories: [
+                        { name: "IA", items: ["Herramientas IA y LLMs", "Flujos de trabajo automatizados con IA - n8n", "Adopción Digital"] },
+                        { name: "Datos y Analítica", items: ["Power BI y DOMO", "Excel Avanzado y SQL", "Data Storytelling", "Diseño de KPIs y OLAP"] },
+                        { name: "Gestión de Proyectos", items: ["Metodologías Ágiles", "Gobernanza PMO", "Gestión de Stakeholders", "Jira"] }
+                    ]
+                },
+                experience: {
+                    title: "Experiencia Destacada",
+                    roles: [
+                        {
+                            title: "Analista de Inteligencia de Negocios",
+                            company: "American Express GBT",
+                            location: "Remoto (España)",
+                            date: "Presente",
+                            description: "Desarrollo y mantenimiento de dashboards estratégicos para la toma de decisiones. Definición y seguimiento de KPIs para mejorar la visibilidad del desempeño. Creación de ETLs y lógicas según los requerimientos del negocio. Trabajo con equipos técnicos y de negocio para traducir requerimientos en soluciones de datos."
+                        },
+                        {
+                            title: "Analista de Datos y BI",
+                            company: "Freelance",
+                            location: "España",
+                            date: "Anterior",
+                            description: "Diseño y gestión de modelos de datos multidimensionales y cubos OLAP para analítica avanzada. Trabajo directo con clientes para traducir necesidades de negocio. Mejora en la eficiencia de reportes reduciendo análisis manual."
+                        },
+                        {
+                            title: "Contratista de Obra / Gerente de Proyecto",
+                            company: "Independiente",
+                            location: "Argentina",
+                            date: "Ene 2019 – Ene 2020",
+                            description: "Gestión integral de proyectos, asignación de recursos y ejecución end-to-end. Coordinación de equipos asegurando entregas dentro del cronograma y presupuesto. Fuertes capacidades en comunicación con interesados."
+                        },
+                        {
+                            title: "Analista de Datos – Proyecto de Digitalización",
+                            company: "Sector TI",
+                            location: "Argentina",
+                            date: "Ago 2016 – Dic 2018",
+                            description: "Transformación y estructuración de datos para el desarrollo de software de sistemas catastrales. Habilitación de la búsqueda de grandes volúmenes de datos, mejorando la eficiencia operativa."
+                        },
+                        {
+                            title: "Asistente de Gerente de Proyecto",
+                            company: "NA-SA S.A. - Extesión de vida central nuclear",
+                            location: "Argentina",
+                            date: "Oct 2015 – Ago 2018",
+                            description: "Coordinación de stakeholders en proyecto de infraestructura a gran escala. Gestión de presupuestos, planificación y seguimiento con Primavera P6. Análisis de impacto y monitoreo de progreso."
+                        }
+                    ]
+                },
+                education: {
+                    title: "Educación",
+                    items: [
+                        { degree: "Máster en Inteligencia Artificial", school: "BIG school, España", year: "2025/2026" },
+                        { degree: "Gestión de Proyectos Digitales", school: "Barcelona, España", year: "2020" },
+                        { degree: "Ingeniería Industrial", school: "Universidad Tecnológica Nacional, ARG", year: "2012" }
+                    ]
+                },
+                footer: { text: "© 2024 Martín Nieto. Todos los derechos reservados." }
+            }
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState('en');
+            const [scrolled, setScrolled] = useState(false);
+            const t = content[lang];
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    setScrolled(window.scrollY > 50);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            return (
+                <div className="min-h-screen flex flex-col font-sans overflow-x-hidden">
+                    {/* Header */}
+                    <header className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'bg-slate-900/90 backdrop-blur-md border-b border-white/10 py-5' : 'bg-transparent py-8'}`}>
+                        <div className="max-w-6xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+                            <div className="text-xl font-bold tracking-[0.2em] text-gradient-metallic uppercase cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
+                                M.Nieto
+                            </div>
+                            <div className="flex items-center gap-8">
+                                <button
+                                    onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
+                                    className="text-xs font-semibold text-slate-400 hover:text-white transition-colors flex items-center gap-2 uppercase tracking-widest group"
+                                    title={lang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
+                                >
+                                    <span className="text-slate-500 group-hover:text-white transition-colors"><Icons.Globe /></span>
+                                    {lang === 'en' ? 'ES' : 'EN'}
+                                </button>
+                                <a href="#contact" className="hidden sm:flex px-6 py-3 border border-white/20 text-xs font-semibold hover:bg-white hover:text-slate-900 transition-all duration-300 tracking-[0.15em] text-white uppercase backdrop-blur-sm">
+                                    {t.nav.contact}
+                                </a>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="flex-grow pt-48 pb-20">
+                        {/* Hero Section */}
+                        <section className="max-w-5xl mx-auto px-6 lg:px-12 mb-40 animate-fade-in-up">
+                            <div className="flex items-center gap-3 text-xs text-slate-400 mb-10 font-medium tracking-[0.2em] uppercase">
+                                <Icons.MapPin />
+                                {t.hero.location}
+                            </div>
+
+                            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold mb-8 text-gradient-metallic leading-[1.1] tracking-tighter">
+                                {t.hero.title}
+                            </h1>
+
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl text-slate-300 font-light mb-12 max-w-2xl leading-relaxed tracking-wide opacity-90">
+                                {t.hero.subtitle}
+                            </h2>
+
+                            <p className="text-slate-400 text-lg lg:text-xl max-w-2xl mb-16 leading-relaxed font-light opacity-80 whitespace-pre-line">
+                                {t.hero.summary}
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row gap-6">
+                                <a href="#contact" className="px-10 py-5 bg-white text-slate-900 text-xs font-bold hover:bg-slate-200 transition-colors tracking-[0.15em] uppercase flex items-center justify-center gap-3 group sm:w-auto">
+                                    {t.hero.cta}
+                                    <span className="transform group-hover:translate-x-1.5 transition-transform"><Icons.ArrowRight /></span>
+                                </a>
+                                <a href="https://www.linkedin.com/in/lmnieto/" target="_blank" rel="noreferrer" className="px-10 py-5 border border-white/20 text-white text-xs font-bold hover:bg-white/5 transition-colors tracking-[0.15em] uppercase flex items-center justify-center gap-3 sm:w-auto">
+                                    <Icons.Linkedin />
+                                    LinkedIn
+                                </a>
+                            </div>
+                        </section>
+
+                        {/* Divider */}
+                        <div className="max-w-6xl mx-auto px-6 lg:px-12 mb-32"><div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div></div>
+
+                        {/* Skills Section */}
+                        <section className="max-w-6xl mx-auto px-6 lg:px-12 mb-40 relative">
+                            <div className="absolute top-0 left-6 lg:left-12 w-0.5 h-12 bg-gradient-to-b from-white to-transparent opacity-30"></div>
+
+                            <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-500 mb-16 pt-2">
+                                {t.skills.title}
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {t.skills.categories.map((cat, i) => (
+                                    <div key={i} className="bg-gradient-metallic p-10 border-metallic glow-hover transform transition-all duration-500">
+                                        <h4 className="text-lg font-medium text-white mb-8 tracking-wide">{cat.name}</h4>
+                                        <div className="flex flex-wrap gap-2.5">
+                                            {cat.items.map((item, j) => (
+                                                <span key={j} className="px-3.5 py-1.5 bg-white/5 border border-white/10 rounded-sm text-slate-300 text-[13px] font-light tracking-wide hover:bg-white/10 transition-colors">
+                                                    {item}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Experience Section */}
+                        <section className="max-w-5xl mx-auto px-6 lg:px-12 mb-40 relative">
+                            <div className="absolute top-0 left-6 lg:left-12 w-0.5 h-12 bg-gradient-to-b from-white to-transparent opacity-30"></div>
+
+                            <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-500 mb-20 pt-2">
+                                {t.experience.title}
+                            </h3>
+
+                            <div className="space-y-20 ml-2 md:ml-4 border-l border-white/10 pl-8 md:pl-12">
+                                {t.experience.roles.map((role, i) => (
+                                    <div key={i} className="relative group">
+                                        <div className="absolute -left-[37px] md:-left-[53px] top-1.5 w-2 h-2 rounded-full bg-slate-600 group-hover:bg-white transition-colors duration-500 shadow-[0_0_15px_rgba(255,255,255,0)] group-hover:shadow-[0_0_15px_rgba(255,255,255,0.6)]"></div>
+
+                                        <div className="grid md:grid-cols-[1fr_2.5fr] gap-4 md:gap-16 items-start">
+                                            <div className="text-slate-500 text-[11px] font-bold tracking-[0.18em] uppercase mt-1.5 opacity-80">
+                                                {role.date}
+                                            </div>
+                                            <div>
+                                                <h4 className="text-2xl font-light text-white mb-2 group-hover:text-gradient-metallic transition-all duration-500">{role.title}</h4>
+                                                <div className="text-slate-400 font-medium mb-6 text-sm tracking-wide flex items-center gap-2">
+                                                    {role.company}
+                                                    <span className="opacity-40">/</span>
+                                                    <span className="font-light">{role.location}</span>
+                                                </div>
+                                                <p className="text-slate-400 text-base leading-relaxed font-light opacity-80">{role.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Education Section */}
+                        <section className="max-w-5xl mx-auto px-6 lg:px-12 mb-20 relative">
+                            <div className="absolute top-0 left-6 lg:left-12 w-0.5 h-12 bg-gradient-to-b from-white to-transparent opacity-30"></div>
+
+                            <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-500 mb-16 pt-2">
+                                {t.education.title}
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {t.education.items.map((edu, i) => (
+                                    <div key={i} className="p-8 border-metallic bg-white/[0.02] hover:bg-white/[0.04] transition-colors duration-300">
+                                        <div className="text-slate-500 text-[11px] font-bold tracking-[0.15em] uppercase mb-4">{edu.year}</div>
+                                        <h4 className="text-lg font-light text-white mb-3">{edu.degree}</h4>
+                                        <div className="text-slate-400 text-sm font-light leading-relaxed">{edu.school}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </main>
+
+                    {/* Footer / Contact */}
+                    <footer id="contact" className="border-t border-white/10 bg-black/40 relative overflow-hidden flex-shrink-0">
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none"></div>
+
+                        <div className="max-w-6xl mx-auto px-6 lg:px-12 py-32 relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-16">
+                            <div>
+                                <h2 className="text-4xl md:text-5xl font-light text-white mb-10 tracking-wide leading-tight">
+                                    Let's build something <br /><span className="font-semibold text-gradient-metallic">impactful.</span>
+                                </h2>
+                                <div className="flex flex-col gap-6 text-slate-400">
+                                    <a href="mailto:nieto.lm@gmail.com" className="hover:text-white transition-colors flex items-center gap-5 group w-max">
+                                        <span className="p-4 border border-white/10 bg-white/5 group-hover:bg-white group-hover:text-slate-900 transition-all duration-300"><Icons.Mail /></span>
+                                        <span className="tracking-wide text-lg font-light">nieto.lm@gmail.com</span>
+                                    </a>
+                                    <a href="tel:+34635517640" className="hover:text-white transition-colors flex items-center gap-5 group w-max">
+                                        <span className="p-4 border border-white/10 bg-white/5 group-hover:bg-white group-hover:text-slate-900 transition-all duration-300"><Icons.Phone /></span>
+                                        <span className="tracking-wide text-lg font-light">+34 635 51 76 40</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-start md:items-end gap-6 pt-10 md:pt-0">
+                                <a href="https://www.linkedin.com/in/lmnieto/" target="_blank" rel="noreferrer" className="flex items-center gap-4 text-slate-400 hover:text-white transition-colors tracking-[0.2em] uppercase text-xs font-bold group">
+                                    Connect on LinkedIn
+                                    <span className="transform group-hover:translate-x-1.5 transition-transform group-hover:-translate-y-1.5 p-3 border border-white/10 bg-white/5 group-hover:border-white/30"><Icons.Linkedin /></span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12 py-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-600 text-[10px] sm:text-xs tracking-[0.15em] uppercase">
+                            <div>{t.footer.text}</div>
+                            <div className="flex items-center gap-2">React & Tailwind CSS <span className="text-white/20">|</span> Minimalist Architecture</div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
