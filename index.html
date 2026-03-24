@@ -118,6 +118,39 @@
         .animate-fade-in-up {
             animation: fadeInUp 0.8s ease-out forwards;
         }
+
+        /* Print Styles for Perfect PDF Export */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body {
+                background-color: #020617 !important;
+            }
+
+            header {
+                position: absolute !important;
+                /* Prevent sticky overlapping */
+            }
+
+            main {
+                padding-top: 2rem !important;
+            }
+
+            section,
+            .grid>div,
+            .relative.group {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                /* Prevent cutting cards/timeline in half */
+            }
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+        }
     </style>
 </head>
 
