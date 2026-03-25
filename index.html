@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Martín Nieto | Portfolio</title>
+    <title>L. Martín Nieto | Portfolio</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tailwind Configuration -->
@@ -174,7 +174,7 @@
             en: {
                 nav: { contact: "Contact Me" },
                 hero: {
-                    title: "Martín Nieto",
+                    title: "L. Martín Nieto",
                     subtitle: "AI | Data & BI | PMO",
                     summary: `Data & Business Intelligence professional with 5+ years of experience driving data-driven decision making, digital transformation and process optimization across international environments.\n\nProven track record translating complex data and technical workflows into business insights, KPI frameworks and scalable reporting solutions.\n\nExperienced in stakeholder coordination, training support, and adoption of digital tools, with growing expertise in AI, automation and analytics enablement.\n\nStrong communicator with the ability to bridge the gap between technical teams and business users, enabling adoption of new tools, workflows and data-driven practices.`,
                     cta: "Work with Me",
@@ -184,7 +184,7 @@
                     title: "Core Expertise",
                     categories: [
                         { name: "AI & Digital Enablement", items: ["AI Tools & LLMs", "AI Workflow Automation - n8n", "Digital Adoption"] },
-                        { name: "Data & Analytics", items: ["Power BI & DOMO", "Advanced EXCEL & SQL", "Data Storytelling", "KPI Design & OLAP"] },
+                        { name: "Data & Analytics", items: ["Power BI & DOMO", "Advanced EXCEL & SQL", "Data Storytelling", "Dashboards & KPI Design"] },
                         { name: "Project Management", items: ["Agile Methodologies", "PMO Governance", "Stakeholder Mgmt", "Jira"] }
                     ]
                 },
@@ -236,12 +236,12 @@
                         { degree: "Industrial Engineer", school: "Universidad Tecnológica Nacional, ARG", year: "2012" }
                     ]
                 },
-                footer: { text: "© 2024 Martín Nieto. All rights reserved." }
+                footer: { text: "© 2026 L. Martín Nieto. All rights reserved." }
             },
             es: {
                 nav: { contact: "Contacto" },
                 hero: {
-                    title: "Martín Nieto",
+                    title: "L. Martín Nieto",
                     subtitle: "IA | Datos y BI | PMO",
                     summary: `Profesional en Data & Business Intelligence con más de 5 años de experiencia impulsando la toma de decisiones basada en datos, la transformación digital y la optimización de procesos en entornos dinamicos.\n\nCuento con una trayectoria sólida traduciendo flujos de trabajo técnicos y datos complejos en ‘insights’ de negocio, KPIs y soluciones de reporting.\n\nExperto en la coordinación de stakeholders, soporte en formación y adopción de herramientas digitales, con una especialización creciente en IA, automatización y habilitación analítica.\n\nPoseo fuertes habilidades comunicativas para cerrar la brecha entre los equipos técnicos y las áreas de negocio, facilitando la adopción de nuevos flujos de trabajo y prácticas orientadas a la mejora continua.`,
                     cta: "Trabaja Conmigo",
@@ -251,7 +251,7 @@
                     title: "Áreas de Especialización",
                     categories: [
                         { name: "IA", items: ["Herramientas IA y LLMs", "Flujos de trabajo automatizados con IA - n8n", "Adopción Digital"] },
-                        { name: "Datos y Analítica", items: ["Power BI y DOMO", "Excel Avanzado y SQL", "Data Storytelling", "Diseño de KPIs y OLAP"] },
+                        { name: "Datos y Analítica", items: ["Power BI y DOMO", "Excel Avanzado y SQL", "Data Storytelling", "Diseño de Dashboards y KPIs"] },
                         { name: "Gestión de Proyectos", items: ["Metodologías Ágiles", "Gobernanza PMO", "Gestión de Stakeholders", "Jira"] }
                     ]
                 },
@@ -303,7 +303,7 @@
                         { degree: "Ingeniería Industrial", school: "Universidad Tecnológica Nacional, ARG", year: "2012" }
                     ]
                 },
-                footer: { text: "© 2024 Martín Nieto. Todos los derechos reservados." }
+                footer: { text: "© 2026 L. Martín Nieto. Todos los derechos reservados." }
             }
         };
 
@@ -326,7 +326,7 @@
                     <header className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'bg-slate-900/90 backdrop-blur-md border-b border-white/10 py-5' : 'bg-transparent py-8'}`}>
                         <div className="max-w-6xl mx-auto px-6 lg:px-12 flex items-center justify-between">
                             <div className="text-xl font-bold tracking-[0.2em] text-gradient-metallic uppercase cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-                                M.Nieto
+                                L.M.Nieto
                             </div>
                             <div className="flex items-center gap-8">
                                 <button
@@ -391,7 +391,7 @@
                                 {t.skills.categories.map((cat, i) => (
                                     <div key={i} className="bg-gradient-metallic p-10 border-metallic glow-hover transform transition-all duration-500">
                                         <h4 className="text-lg font-medium text-white mb-8 tracking-wide">{cat.name}</h4>
-                                        <div className="flex flex-wrap gap-2.5">
+                                        <div className="flex flex-col items-start gap-3">
                                             {cat.items.map((item, j) => (
                                                 <span key={j} className="px-3.5 py-1.5 bg-white/5 border border-white/10 rounded-sm text-slate-300 text-[13px] font-light tracking-wide hover:bg-white/10 transition-colors">
                                                     {item}
